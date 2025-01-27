@@ -1,14 +1,15 @@
 const express = require("express");
 const ViteExpress = require("vite-express");
 
-const app = require('./app');
-const { syncAndSeed, client } = require('./db');
+const app = require('../client/app');
+// const { seed, client } = require('./prisma');
+// const { seed } = require('./prisma');
 
 const init = async()=> {
   try {
-    await client.connect();
+    // await client.connect();
     if(process.env.SYNC === 'TRUE'){
-      await syncAndSeed();
+      // await seed();
     }
     const port = process.env.PORT || 3000;
     ViteExpress.listen(app, port, () =>
@@ -21,6 +22,5 @@ const init = async()=> {
 };
 
 init();
-
 
 

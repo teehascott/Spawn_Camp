@@ -1,0 +1,77 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id           Int           @id @default(autoincrement())
+  username     String        @unique
+  email        String        @unique
+  password     String
+  joinedOn     DateTime      @default(now())
+  bio          String?
+  avatar       String?
+  bookmarks    Bookmark[]
+  discComments DiscComment[]
+  discPosts    DiscPost[]
+  gameComments GameComment[]
+  gamePosts    GamePost[]
+}
+
+model Bookmark {
+  id        Int      @id @default(autoincrement())
+  userId    Int
+  gameId    Int
+  createdAt DateTime @default(now())
+  game      GamePost @relation(fields: [gameId], references: [gameId], onDelete: Cascade)
+  user      User     @relation(fields: [userId], references: [id])
+
+  @@unique([userId, gameId])
+}
+
+model GamePost {
+  gameId    Int           @id @default(autoincrement())
+  title     String
+  userId    Int
+  gameName  String
+  gameURL   String
+  createdAt DateTime      @default(now())
+  content   String
+  bookmarks Bookmark[]
+  comments  GameComment[]
+  user      User          @relation(fields: [userId], references: [id])
+}
+
+model GameComment {
+  id        Int      @id @default(autoincrement())
+  userId    Int
+  gameId    Int
+  createdAt DateTime @default(now())
+  content   String
+  game      GamePost @relation(fields: [gameId], references: [gameId], onDelete: Cascade)
+  user      User     @relation(fields: [userId], references: [id])
+}
+
+model DiscPost {
+  id        Int           @id @default(autoincrement())
+  title     String
+  userId    Int
+  createdAt DateTime      @default(now())
+  content   String
+  comments  DiscComment[]
+  user      User          @relation(fields: [userId], references: [id])
+}
+
+model DiscComment {
+  id        Int      @id @default(autoincrement())
+  userId    Int
+  discId    Int
+  createdAt DateTime @default(now())
+  content   String
+  disc      DiscPost @relation(fields: [discId], references: [id], onDelete: Cascade)
+  user      User     @relation(fields: [userId], references: [id])
+}

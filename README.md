@@ -1,17 +1,10 @@
-# Setup
-
-- create database uni_fullstack_template_db
-- npm install
-- npm run dev
-
-# Deployment
-
-- set DATABASE_URL as environment variable
-- set SYNC to TRUE as environment variable in order to sync and seed database
-- set NODE_VERSION to 19.8.1
-
-- build command 
-  - npm install && npm run build
-- start command 
-  - npm run start 
+# Welcome to Spawn Camp! 
+## A forum inspired website designed to allow you to view and upload small games as well as create discussions to take about your favorite games!
+You should be able to:
+* Register as a new user!
+* Sign in / Sign out
+* Customize your user profile
+* View game posts and discussion posts on your home   page
+* Create game posts or discussion posts
+* View and create comments on both game or discussion posts
 
