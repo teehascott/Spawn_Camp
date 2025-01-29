@@ -3,9 +3,10 @@
   "private": true,
   "version": "0.0.0",
   "scripts": {
-    "dev": "vite",
-    "build": "vite build",
-    "serve": "vite preview"
+    "dev": "cross-env SYNC=TRUE DATABASE_URL=\"postgresql://nep:nepeta@localhost:5432/capstone\" nodemon src/db/main.js -w src/db",
+    "db-push": "cross-env DATABASE_URL=\"postgresql://nep:nepeta@localhost:5432/capstone\" prisma db push --schema ./prisma/schema.prisma",
+    "start": "cross-env NODE_ENV=production node src/db/main.js",
+    "build": "vite build"
   },
   "dependencies": {
     "@emotion/react": "^11.14.0",

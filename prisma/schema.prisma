@@ -20,6 +20,8 @@ model User {
   discPosts    DiscPost[]
   gameComments GameComment[]
   gamePosts    GamePost[]
+  profileComments      ProfileComment[] @relation("profile")
+  commentsOnProfiles         ProfileComment[] @relation("user")
 }
 
 model Bookmark {
@@ -74,4 +76,14 @@ model DiscComment {
   content   String
   disc      DiscPost @relation(fields: [discId], references: [id], onDelete: Cascade)
   user      User     @relation(fields: [userId], references: [id])
+}
+
+model ProfileComment {
+  id        Int      @id @default(autoincrement())
+  userId    Int
+  profileId Int
+  createdAt DateTime @default(now())
+  content   String
+  profile   User     @relation("profile", fields: [profileId], references: [id], onDelete: Cascade)
+  user      User     @relation("user", fields: [userId], references: [id])
 }

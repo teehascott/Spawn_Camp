@@ -15,6 +15,8 @@ import Paper from "@mui/material/Paper";
 import Header from "./Header";
 import { UserProvider } from "../context/UserContext";
 import SingleGame from "./SingleGame";
+import SingleDisc from "./SingleDisc";
+import Loginform from "./Loginform";
 
 function App() {
   const theme = createTheme({
@@ -51,13 +53,17 @@ function App() {
               <Navbar />
               <Routes>
                 <Route path="/" element={<Home />} />
-                <Route path="/:username/:id" element={<Profile />} />
+                <Route path="/profile" element={<Profile />} />
+                <Route path="/login" element={<Loginform />} />
                 <Route path="/post" element={<Makepost />} />
                 <Route path="/post/game">
                   <Route path="" element={<Gameform />} />
                   <Route path=":gameId" element={<SingleGame />} />
                 </Route>
-                <Route path="/post/disc" element={<Discform />} />
+                <Route path="/post/disc" >
+                <Route path="" element={<Discform />} />
+                <Route path=":discId" element={<SingleDisc />} />
+                </Route>
               </Routes>
               <Footer />
             </Paper>

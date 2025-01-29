@@ -4,10 +4,15 @@ import { useUser } from "../context/UserContext";
 import Avatar from "@mui/material/Avatar";
 import { deepOrange } from "@mui/material/colors";
 import Chip from "@mui/material/Chip";
+import { useNavigate } from "react-router-dom";
 
 export default function Header() {
-  const { user, loading, fetchUser, logout } = useUser();
+  const { user } = useUser();
   console.log(user);
+  const navigate = useNavigate();
+  const handleNavigation = (path) => {
+    navigate(path);
+  };
   return (
     <Box
       sx={{
@@ -28,8 +33,16 @@ export default function Header() {
       >
         {user && (
           <>
-            <Avatar sx={{ bgcolor: deepOrange[500] }}>N</Avatar>
-            <Chip label={user?.username} />
+            <Avatar
+              sx={{ bgcolor: deepOrange[500] }}
+              onClick={() => handleNavigation("profile")}
+            >
+              N
+            </Avatar>
+            <Chip
+              label={user?.username}
+              onClick={() => handleNavigation("profile")}
+            />
           </>
         )}
       </Box>

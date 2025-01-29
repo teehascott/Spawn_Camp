@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
 import { useNavigate } from "react-router-dom";
 import { Box, Button } from "@mui/material";
 import { useUser } from "../context/UserContext";
@@ -6,7 +6,7 @@ import { useUser } from "../context/UserContext";
 
 export default function Navbar() {
   const navigate = useNavigate();
-  const { user, loading, fetchUser, logout } = useUser();
+  const { user, logout } = useUser();
   const handleNavigation = (path) => {
     navigate(path);
   };
@@ -14,7 +14,7 @@ export default function Navbar() {
     if (user) {
       logout();
     } else {
-      fetchUser();
+      handleNavigation("/login");
     }
   };
 

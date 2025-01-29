@@ -1,107 +1,121 @@
-import React, { useState, useEffect } from "react";
-import { useNavigate, useParams } from "react-router-dom";
-import { PrismaClient } from "@prisma/client";
+import { Box, Button, CardHeader } from "@mui/material";
+import React from "react";
+import TextField from "@mui/material/TextField";
+import { useState, useEffect } from "react";
+import Card from "@mui/material/Card";
+import CardContent from "@mui/material/CardContent";
+import Typography from "@mui/material/Typography";
+import { useUser } from "../context/UserContext";
 
-const prisma = new PrismaClient();
 
-const NavbarProfileButton = () => {
-  const navigate = useNavigate();
-
-  // User data and authentication state
-  const [user, setUser] = useState(null);
-
-  // Fetch user data from the database using Prisma
-  useEffect(() => {
-    const fetchUserData = async () => {
-      try {
-        // Replace this logic with your actual API call or backend integration
-        const response = await fetch("/api/user"); // Your backend API endpoint
-        const userData = await response.json();
-        setUser(userData);
-      } catch (error) {
-        console.error("Failed to fetch user data:", error);
-        setUser(null);
-      }
-    };
-
-    fetchUserData();
-  }, []);
-
-  const handleNavigate = (path) => {
-    navigate(path);
+const Profile = () => {
+  const { user } = useUser();
+  const [comments, setComments] = useState([]);
+  const [userComment, setUserComment] = useState("");
+  const handleCommentChange = (e) => {
+    setUserComment(e.target.value);
   };
-
-  return (
-    <div className="navbar-profile-button">
-      {user ? (
-        // Display profile avatar and username if logged in
-        <div className="profile-info" onClick={() => handleNavigate("/profile")}>
-          <img
-            src={user.avatar || "https://via.placeholder.com/40"} // Fallback to placeholder
-            alt="Profile Avatar"
-            className="avatar"
-            style={{
-              width: "40px",
-              height: "40px",
-              borderRadius: "50%",
-              marginRight: "10px",
-              cursor: "pointer",
-            }}
-          />
-          <span>{user.username}</span>
-        </div>
-      ) : (
-        // Display login/register options if not logged in
-        <div className="auth-buttons">
-          <button
-            onClick={() => handleNavigate("/login")}
-            className="login-button"
-          >
-            Log In
-          </button>
-          <button
-            onClick={() => handleNavigate("/register")}
-            className="register-button"
-          >
-            Register
-          </button>
-        </div>
-      )}
-    </div>
-  );
-};
-
-const UserProfile = () => {
-  const { username } = useParams(); // Extract the username from the route
-  const [user, setUser] = useState(null);
-
   useEffect(() => {
-    const fetchUserData = async () => {
-      try {
-        // Replace this with your actual API endpoint
-        const response = await fetch(`/api/users/${username}/${id}`);
-        const data = await response.json();
-        setUser(data);
-      } catch (error) {
-        console.error("Failed to fetch user data:", error);
-      }
-    };
-
-    fetchUserData();
-  }, [username]);
-
-  if (!user) {
-    return <div>Loading user data...</div>;
-  }
-
+    if (!user) return;
+    console.log(user);
+    refreshComments();
+  }, [user]);
+  const refreshComments = () => {
+    fetch(`/api/user/${user.id}/comments`, {}).then((response) => {
+      response.json().then((data) => {
+        console.log(data);
+        setComments(data.sort((a, b) => b.id - a.id));
+      });
+    });
+  };
+  const handleSubmit = () => {
+    fetch("/api/comments", {
+      body: JSON.stringify({
+        userId: user.id,
+        content: userComment,
+        profileId: user.id,
+      }),
+      headers: {
+        "Content-Type": "application/json",
+      },
+      method: "POST",
+    })
+      .then(() => {
+        refreshComments();
+      });
+  };
   return (
-    <div>
-      <h1>{user.name}'s Profile</h1>
-      <p>Username: {user.username}</p>
-      <p>Email: {user.email}</p>
-      <img src={user.avatar} alt={`${user.username}'s avatar`} />
-    </div>
+    <Box
+      sx={{
+        width: "100%",
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "flex-start",
+        gap: "10px",
+        padding: "20px",
+      }}
+    >
+      <Box
+        sx={{
+          width: "100%",
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          gap: "10px",
+          padding: "20px",
+          flexDirection: "column",
+        }}
+      >
+        <Card>
+          <CardHeader title={`${user?.username || "Unknown User"}'s Profile`} />
+
+          <CardContent>
+            <Typography variant="h6">{user?.username}</Typography>
+            <Typography variant="h6">{user?.joinedOn}</Typography>
+            <Typography variant="body1">{user?.bio}</Typography>
+          </CardContent>
+        </Card>
+        <TextField
+          id="outlined-multiline-static"
+          label="Make a Comment"
+          multiline
+          rows={4}
+          sx={{ width: "50%" }}
+          value={userComment}
+          onChange={handleCommentChange}
+        />
+        <Button variant="contained" onClick={handleSubmit}>
+          Submit
+        </Button>
+        <Box
+          sx={{
+            width: "100%",
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            gap: "10px",
+            padding: "20px",
+            flexDirection: "column",
+          }}
+        >
+          {comments.map((comment) => {
+            return (
+              <Card key={comment.id}>
+                <CardContent
+                  style={{
+                    backgroundColor: "#333333",
+                    minWidth: "200px",
+                    minHeight: "75px",
+                  }}
+                >
+                  <Typography variant="body1">{comment.content}</Typography>
+                </CardContent>
+              </Card>
+            );
+          })}
+        </Box>
+      </Box>
+    </Box>
   );
 };
-
-export default { NavbarProfileButton, UserProfile };
+export default Profile;

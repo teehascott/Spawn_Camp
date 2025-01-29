@@ -13,5 +13,7 @@ app.use((err, req, res, next)=> {
 // const authRoutes = require('./routes/auth');
 // app.use('/api/auth', authRoutes);
 const routes = require('../db/routes');
+const authRoutes = require('../db/auth');
 app.use('/api', routes);
+app.use('/api/auth', authRoutes);
 module.exports = app;

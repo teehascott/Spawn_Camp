@@ -2,6 +2,7 @@ import React from "react";
 import { Box, Card, Typography } from "@mui/material";
 import { useState, useEffect } from "react";
 import CardContent from "@mui/material/CardContent";
+import { useNavigate } from "react-router-dom";
 
 export default function DiscList() {
   const [discs, setDisc] = useState([]);
@@ -13,6 +14,11 @@ export default function DiscList() {
       });
     });
   }, []);
+  const navigate = useNavigate();
+      const handleNavigation = (path) => {
+          navigate(path);
+        };
+  
 
   return (
     <Box
@@ -27,7 +33,7 @@ export default function DiscList() {
     >
       {discs.map((disc) => {
         return (
-          <Card key={disc.id} style={{backgroundColor: "#333333", minWidth: "350px", minHeight: "150px"}}>
+          <Card key={disc.id} style={{backgroundColor: "#333333", minWidth: "350px", minHeight: "150px"}} onClick={() => handleNavigation(`post/disc/${disc.id}`)}>
             <CardContent>
               <Typography variant="h5">{disc.title}</Typography>
               <Typography variant="body1">{disc.content}</Typography>

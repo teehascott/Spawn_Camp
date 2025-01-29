@@ -22,7 +22,7 @@ const SingleDisc = () => {
     fetch("/api/post/disc", {}).then((response) => {
       response.json().then((data) => {
         console.log(data);
-        const foundDisc = data.find((disc) => disc.discId === discId);
+        const foundDisc = data.find((disc) => disc.id === discId);
         console.log(foundDisc);
         setDisc(foundDisc);
       });
