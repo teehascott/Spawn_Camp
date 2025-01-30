@@ -69,6 +69,10 @@ const Discform = () => {
           sx={{ width: "50%" }}
           value={discPost}
           onChange={handlePostChange}
+          style={{
+            backgroundColor: "#90708c",
+            outlineColor: "#755a71",
+          }}
         />
         <Button variant="contained" onClick={handleSubmit}>Submit</Button>
       </Box>

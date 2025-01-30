@@ -33,8 +33,11 @@ export default function DiscList() {
     >
       {discs.map((disc) => {
         return (
-          <Card key={disc.id} style={{backgroundColor: "#333333", minWidth: "350px", minHeight: "150px"}} onClick={() => handleNavigation(`post/disc/${disc.id}`)}>
-            <CardContent>
+          <Card key={disc.id} style={{ minWidth: "350px", minHeight: "150px"}} onClick={() => handleNavigation(`post/disc/${disc.id}`)}>
+            <CardContent style={{
+            backgroundColor: "#ff8581",
+            outlineColor: "#fffdbda",
+          }}>
               <Typography variant="h5">{disc.title}</Typography>
               <Typography variant="body1">{disc.content}</Typography>
             </CardContent>

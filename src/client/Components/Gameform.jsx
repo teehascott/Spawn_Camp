@@ -1,4 +1,3 @@
-// src/client/Components/Gameform.jsx
 import { Box, Button } from "@mui/material";
 import React from "react";
 import TextField from "@mui/material/TextField";
@@ -97,6 +96,10 @@ const Gameform = () => {
           sx={{ width: "50%" }}
           value={gamePost}
           onChange={handlePostChange}
+          style={{
+            backgroundColor: "#90708c",
+            outlineColor: "#755a71",
+          }}
         />
         <Button variant="contained" onClick={handleSubmit}>Submit</Button>
       </Box>
@@ -104,4 +107,4 @@ const Gameform = () => {
   );
 };
 
-export default Gameform; // Ensure it's exported as default
+export default Gameform; 

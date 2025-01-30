@@ -23,14 +23,14 @@ function App() {
     palette: {
       mode: "dark",
       primary: {
-        main: "#673ab7", // Deep purple
+        main: "#2fa885", // Dark Greenish Blue
       },
       secondary: {
-        main: "#ff9100", // Amber
+        main: "#FF8581", // Coral
       },
       background: {
-        default: "#121212",
-        paper: "#1e1e1e",
+        default: "#2fa885",
+        paper: "#050505",
       },
       text: {
         primary: "#ffffff",
@@ -38,8 +38,8 @@ function App() {
       },
     },
     typography: {
-      fontFamily: "Roboto, Arial, sans-serif",
-      fontSize: 16,
+      fontFamily: "Smooch Sans, Roboto, Arial, sans-serif",
+      fontSize: 22,
     },
   });
   return (

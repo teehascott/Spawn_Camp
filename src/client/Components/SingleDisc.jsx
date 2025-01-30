@@ -1,57 +1,72 @@
 import { Box, Button, CardHeader } from "@mui/material";
-import React from "react";
+import React, { useState, useEffect } from "react";
 import TextField from "@mui/material/TextField";
-import { useState, useEffect } from "react";
 import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
 import Typography from "@mui/material/Typography";
 import { useParams } from "react-router-dom";
+import { useUser } from "../context/UserContext";
 
 const SingleDisc = () => {
-  const [disc, setDisc] = useState([]);
+  const [disc, setDisc] = useState(null);
   const [comments, setComments] = useState([]);
-  const routeParams = useParams();
-  const discId = parseInt(routeParams["discId"]);
-  console.log(discId);
   const [discComment, setDiscComment] = useState("");
-  const handleCommentChange = (e) => {
-    setDiscComment(e.target.value);
-  };
+  const { user } = useUser();
+  const { discId } = useParams();
+
+
+  const parsedDiscId = Number(discId);
+  if (isNaN(parsedDiscId)) {
+    console.error("Invalid discussion ID:", discId);
+  }
+
   useEffect(() => {
-    refreshComments();
-    fetch("/api/post/disc", {}).then((response) => {
-      response.json().then((data) => {
-        console.log(data);
-        const foundDisc = data.find((disc) => disc.id === discId);
-        console.log(foundDisc);
+    fetch("/api/post/disc")
+      .then((response) => response.json())
+      .then((data) => {
+        const foundDisc = data.find((disc) => disc.id === parsedDiscId);
         setDisc(foundDisc);
-      });
-    });
-  }, []);
+      })
+      .catch((error) => console.error("Error fetching discussion:", error));
+  }, [parsedDiscId]);
+
+  useEffect(() => {
+    if (isNaN(parsedDiscId)) return;
+    refreshComments(); // Always fetch comments even when logged out
+  }, [parsedDiscId]);
+
   const refreshComments = () => {
-    fetch(`/api/disc/${discId}/comments`, {}).then((response) => {
-      response.json().then((data) => {
-        console.log(data);
+    fetch(`/api/disc/${parsedDiscId}/comments`)
+      .then((response) => response.json())
+      .then((data) => {
         setComments(data.sort((a, b) => b.id - a.id));
-      });
-    });
+      })
+      .catch((error) => console.error("Error fetching comments:", error));
   };
+
   const handleSubmit = () => {
+    if (!user) {
+      alert("You must be logged in to post a comment!");
+      return;
+    }
+
     fetch("/api/comments", {
       body: JSON.stringify({
-        discId: discId,
+        discId: parsedDiscId,
         content: discComment,
-        userId: 1,
+        userId: user.id,
       }),
-      headers: {
-        "Content-Type": "application/json",
-      },
+      headers: { "Content-Type": "application/json" },
       method: "POST",
-    }).then((response) => console.log(response.json()))
-    .then(() => {
-    refreshComments();
-    });
+    })
+      .then(() => refreshComments())
+      .catch((error) => console.error("Error submitting comment:", error));
   };
+
+  if (!disc) {
+    return <Typography variant="h5">Loading discussion...</Typography>;
+  }
+
   return (
     <Box
       sx={{
@@ -75,46 +90,68 @@ const SingleDisc = () => {
         }}
       >
         <Card>
-          <CardHeader title={disc?.title}></CardHeader>
+          <CardHeader title={disc.title} />
           <CardContent>
-            <Typography variant="body1">{disc?.content}</Typography>
+            <Typography variant="body1">{disc.content}</Typography>
           </CardContent>
         </Card>
-        <TextField
-          id="outlined-multiline-static"
-          label="Make a Comment"
-          multiline
-          rows={4}
-          sx={{ width: "50%" }}
-          value={discComment}
-          onChange={handleCommentChange}
-        />
-        <Button variant="contained" onClick={handleSubmit}>
-          Submit
-        </Button>
+
+        {/* Show comment input only if logged in */}
+        {user ? (
+          <>
+            <TextField
+              id="outlined-multiline-static"
+              label="Make a Comment"
+              multiline
+              rows={4}
+              sx={{ width: "50%" }}
+              value={discComment}
+              onChange={(e) => setDiscComment(e.target.value)}
+              style={{
+                backgroundColor: "#fffd98",
+                outlineColor: "#fffc4b",
+              }}
+              
+            />
+            <Button variant="contained" onClick={handleSubmit}>
+              Submit
+            </Button>
+          </>
+        ) : (
+          <Typography variant="body2" color="#FF8581">
+            You must be logged in to comment.
+          </Typography>
+        )}
+        {/* Comments always show*/}
         <Box
-        sx={{
-          width: "100%",
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-          gap: "10px",
-          padding: "20px",
-          flexDirection: "column",
-        }}
-      >
-          {comments.map((comment) => {
-            return (
-              <Card key={comment.id}>
-                <CardContent style={{backgroundColor: "#333333", minWidth: "200px", minHeight: "75px" }}>
-                  <Typography variant="body1">{comment.content}</Typography>
-                </CardContent>
-              </Card>
-            );
-          })}
+          sx={{
+            width: "100%",
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            gap: "10px",
+            padding: "20px",
+            flexDirection: "column",
+          }}
+        >
+          {comments.map((comment) => (
+            <Card key={comment.id}>
+              <CardContent
+                style={{
+                  backgroundColor: "#114b5f",
+                  outlineColor: "#0e3d4d",
+                  minWidth: "200px",
+                  minHeight: "75px",
+                }}
+              >
+                <Typography variant="body1">{comment.content}</Typography>
+              </CardContent>
+            </Card>
+          ))}
         </Box>
       </Box>
     </Box>
   );
 };
+
 export default SingleDisc;

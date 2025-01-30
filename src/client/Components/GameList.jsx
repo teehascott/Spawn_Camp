@@ -32,8 +32,11 @@ const navigate = useNavigate();
     >
       {games.map((game) => {
         return (
-          <Card key={game.gameId} style={{backgroundColor: "#333333", minWidth: "350px", minHeight: "150px"}} onClick={() => handleNavigation(`post/game/${game.gameId}`)}>
-            <CardContent>
+          <Card key={game.gameId} style={{ minWidth: "350px", minHeight: "150px"}} onClick={() => handleNavigation(`post/game/${game.gameId}`)}>
+            <CardContent style={{
+            backgroundColor: "#ff8581",
+            outlineColor: "#fffdbda",
+          }}>
               <Typography variant="h5">{game.title}</Typography>
               <Typography variant="h6">{game.gameName}</Typography>
               <Typography variant="h6">{game.gameURL}</Typography>

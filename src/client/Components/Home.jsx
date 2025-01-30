@@ -1,5 +1,5 @@
 import React from "react";
-import { Box, Card, Typography } from "@mui/material";
+import { Box } from "@mui/material";
 import GameList from "./GameList";
 import DiscList from "./DiscList";
 
